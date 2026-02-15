@@ -34,10 +34,10 @@ The AI Research Co-Author is architected as a **production-grade, serverless AI 
 - **Built-In Redundancy**: Multi-AZ without configuration
 
 **AWS Service Selection Criteria**:
-- ✅ Fully managed (Bedrock, Lambda, DynamoDB)
-- ✅ Pay-per-use billing (no idle costs)
-- ✅ Production-grade (same services from prototype to enterprise scale)
-- ❌ Avoid: Services requiring infrastructure management (EC2, EKS)
+- Fully managed services (Bedrock, Lambda, DynamoDB)
+- Pay-per-use billing (no idle costs)
+- Production-grade (same services from prototype to enterprise scale)
+- Excluded: Services requiring infrastructure management (EC2, EKS)
 
 ---
 
@@ -628,7 +628,7 @@ Complete Draft → S3
 Return session_id to user
 ```
 
-**Total Latency**: ~220 seconds (3.7 minutes) ✅ Well within 5-minute target
+**Total Latency**: ~220 seconds (3.7 minutes) - Well within 5-minute target
 
 ---
 
@@ -801,9 +801,9 @@ def invoke_tool_with_retry(tool_name, params, max_retries=3):
 | **API Gateway** | 3 requests | **$0.00001** |
 | **DynamoDB** | 10 writes + 5 reads | **$0.015** |
 | **S3** | 50MB storage + 30 PUTs | **$0.005** |
-| **Total** | | **~$0.22/session** ✅ |
+| **Total** | | **~$0.22/session** |
 
-**Target**: < $0.30/session ✅ Achieved
+**Target**: < $0.30/session (Achieved)
 
 ---
 
@@ -898,7 +898,7 @@ def invoke_tool_with_retry(tool_name, params, max_retries=3):
 
 ## 8. Phased Implementation Roadmap
 
-### Phase 1: Core Platform (Current) ✅
+### Phase 1: Core Platform (Current - Completed)
 
 **Timeline**: 48 hours
 
@@ -1001,13 +1001,13 @@ def invoke_tool_with_retry(tool_name, params, max_retries=3):
 
 | **Feature** | **AI Research Co-Author** | **Elicit.org** | **Consensus.app** | **ChatGPT** |
 |-----------|-----------|--------------|------------------|-----------|
-| **Multi-Agent Architecture** | ✅ 5 agents | ❌ Monolithic | ❌ Monolithic | ❌ Single agent |
-| **Citation Verification** | ✅ DOI + arXiv + Retraction Watch | Partial (no retraction check) | Partial | ❌ No verification |
-| **Research Memory** | ✅ Persistent sessions | ❌ | ❌ | Limited (chat history) |
-| **Methodology Generation** | ✅ Dedicated agent | ❌ | ❌ | Basic (prompt-based) |
-| **AWS Native** | ✅ Full serverless stack | ❌ | ❌ | ❌ |
-| **Open Architecture** | ✅ Documented APIs | ❌ Closed | ❌ Closed | ❌ Closed |
-| **Cost Transparency** | ✅ $0.22/session | Unknown | Unknown | $20/month (unlimited) |
+| **Multi-Agent Architecture** | Yes (5 agents) | No (Monolithic) | No (Monolithic) | No (Single agent) |
+| **Citation Verification** | Yes (DOI + arXiv + Retraction Watch) | Partial (no retraction check) | Partial | No verification |
+| **Research Memory** | Yes (Persistent sessions) | No | No | Limited (chat history) |
+| **Methodology Generation** | Yes (Dedicated agent) | No | No | Basic (prompt-based) |
+| **AWS Native** | Yes (Full serverless stack) | No | No | No |
+| **Open Architecture** | Yes (Documented APIs) | No (Closed) | No (Closed) | No (Closed) |
+| **Cost Transparency** | Yes ($0.22/session) | Unknown | Unknown | $20/month (unlimited) |
 
 ### Innovation Highlights for Judges
 

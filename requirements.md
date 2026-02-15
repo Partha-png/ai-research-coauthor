@@ -629,7 +629,7 @@ User → API Gateway → Lambda (Orchestrator)
 | API Gateway | $0.0035 |
 | DynamoDB | $0.01 |
 | S3 | $0.005 |
-| **Total** | **$0.25/session** ✅ |
+| **Total** | **$0.25/session** |
 
 ---
 
@@ -645,7 +645,7 @@ User → API Gateway → Lambda (Orchestrator)
 
 ## 10. Phased Roadmap
 
-### Phase 1: Core Platform (Current) ✅
+### Phase 1: Core Platform (Current - Completed)
 
 **Deliverables**:
 - [x] 5 specialized agents with comprehensive error handling
@@ -712,12 +712,12 @@ User → API Gateway → Lambda (Orchestrator)
 
 | **Feature** | **AI Research Co-Author** | **Elicit.org** | **Consensus.app** | **ChatGPT** |
 |-----------|-----------|--------------|------------------|-----------|
-| Multi-Agent Architecture | ✅ (5 agents) | ❌ | ❌ | ❌ |
-| Citation Verification | ✅ (DOI + arXiv) | Partial | Partial | ❌ |
-| Research Memory | ✅ | ❌ | ❌ | Limited |
-| Methodology Generation | ✅ | ❌ | ❌ | Basic |
-| AWS Native | ✅ | ❌ | ❌ | ❌ |
-| Open Architecture | ✅ | ❌ | ❌ | ❌ |
+| Multi-Agent Architecture | Yes (5 agents) | No | No | No |
+| Citation Verification | Yes (DOI + arXiv) | Partial | Partial | No |
+| Research Memory | Yes | No | No | Limited |
+| Methodology Generation | Yes | No | No | Basic |
+| AWS Native | Yes | No | No | No |
+| Open Architecture | Yes | No | No | No |
 
 ---
 
