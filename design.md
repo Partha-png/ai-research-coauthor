@@ -36,7 +36,7 @@ The AI Research Co-Author is architected as a **production-grade, serverless AI 
 **AWS Service Selection Criteria**:
 - ✅ Fully managed (Bedrock, Lambda, DynamoDB)
 - ✅ Pay-per-use billing (no idle costs)
-- ✅ Production-grade (same services from MVP → enterprise)
+- ✅ Production-grade (same services from prototype to enterprise scale)
 - ❌ Avoid: Services requiring infrastructure management (EC2, EKS)
 
 ---
