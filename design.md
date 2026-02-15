@@ -2,16 +2,24 @@
 
 ## Overview
 
-The AI Research Co-Author is a multi-agent system that generates citation-grounded research-paper-style drafts through specialized AI agents orchestrated by a custom Manager/Controller Process (MCP). The system architecture emphasizes explainability, traceability, and separation of concerns.
+**Problem:**  
+Existing GenAI tools for research suffer from hallucinations, overconfident claims, and non-transparent reasoning, making them unreliable for academic research.
+
+**Solution:**  
+The AI Research Co-Author is a multi-agent system that simulates real research workflows, generating citation-grounded research-paper-style drafts through specialized AI agents orchestrated by a custom Manager/Controller Process (MCP). 
+
+**Goal:**  
+To assist researchers in creating explainable, citation-grounded, early-stage research drafts.
 
 The system follows a pipeline architecture where three specialized agents (Reviewer, Methodology, Critic) execute sequentially, each building upon the previous agent's output. All intermediate results and reasoning are persisted to PostgreSQL to provide complete audit trails and explainability.
 
 **Key Design Principles:**
 - Single Responsibility: Each agent has one clear purpose
 - Explainability: All outputs are traceable to their sources
-- Citation Grounding: All claims are backed by references
-- Custom Orchestration: MCP controls flow without generating content
-- Persistence: Complete audit trail stored in PostgreSQL
+- Citation Grounding: All claims are backed by references (RAG-powered, zero hallucinations)
+- Custom Orchestration: MCP controls flow without generating content (content-neutral)
+- Persistence: Complete audit trail stored in Amazon RDS PostgreSQL
+- AWS Infrastructure: Deployed on AWS for scalability and reliability
 
 ## Architecture
 
@@ -19,41 +27,48 @@ The system follows a pipeline architecture where three specialized agents (Revie
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         FastAPI Backend                          │
-├─────────────────────────────────────────────────────────────────┤
+│                      User Interface Layer                        │
+│                   (Web UI / Frontend Client)                     │
+└────────────────────────────┬────────────────────────────────────┘
+                             │ HTTPS
+┌────────────────────────────▼────────────────────────────────────┐
+│                  API Gateway (FastAPI Backend)                   │
+├──────────────────────────────────────────────────────────────────┤
 │                                                                   │
 │  ┌──────────────────────────────────────────────────────────┐  │
-│  │              Manager/Controller Process (MCP)             │  │
+│  │       Manager/Controller Process (MCP Orchestrator)       │  │
 │  │                                                            │  │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │  │
-│  │  │   Reviewer   │→ │ Methodology  │→ │    Critic    │  │  │
-│  │  │    Agent     │  │    Agent     │  │    Agent     │  │  │
-│  │  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘  │  │
-│  │         │                  │                  │           │  │
-│  │         └──────────────────┴──────────────────┘           │  │
-│  │                            │                               │  │
-│  │                    ┌───────▼────────┐                     │  │
-│  │                    │ Draft Assembler│                     │  │
-│  │                    └───────┬────────┘                     │  │
-│  └────────────────────────────┼──────────────────────────────┘  │
-│                                │                                 │
-│  ┌─────────────────────────────▼──────────────────────────────┐ │
-│  │              LangChain Components (per agent)               │ │
-│  │  • Prompt Templates  • RAG Pipeline  • Output Parsers      │ │
-│  └─────────────────────────────────────────────────────────────┘ │
-│                                                                   │
-└───────────────────────────┬───────────────────────────────────────┘
-                            │
-        ┌───────────────────┼───────────────────┐
-        │                   │                   │
-        ▼                   ▼                   ▼
-┌──────────────┐    ┌──────────────┐    ┌──────────────┐
-│  PostgreSQL  │    │   Amazon S3  │    │  LLM APIs    │
-│              │    │              │    │              │
-│ • Drafts     │    │ • PDF Files  │    │ • GPT-4      │
-│ • Audit Trail│    │ • Documents  │    │ • Claude     │
-│ • Citations  │    │              │    │              │
-└──────────────┘    └──────────────┘    └──────────────┘
+│  │  ┌───────────┐  ┌───────────┐  ┌───────────┐             │  │
+│  │  │  Agent 1  │→ │  Agent 2  │→ │  Agent 3  │             │  │
+│  │  │ (Reviewer)│  │(Methodology)│  │ (Critic)  │             │  │
+│  │  └─────┬─────┘  └─────┬─────┘  └─────┬─────┘             │  │
+│  │        │              │              │                     │  │
+│  │        └──────────────┴──────────────┘                     │  │
+│  │                       │                                    │  │
+│  │               ┌───────▼────────┐                           │  │
+│  │               │ Draft Assembler│                           │  │
+│  │               └───────┬────────┘                           │  │
+│  └───────────────────────┼──────────────────────────────────┘  │
+│                          │                                      │
+│  ┌───────────────────────▼──────────────────────────────────┐  │
+│  │          LangChain Components (per agent)                 │  │
+│  │  • RAG Service  • Prompt Templates  • Output Parsers     │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└───────────────────────┬──────────────────────────────────────────┘
+                        │
+      ┌─────────────────┼─────────────────┬────────────────┐
+      │                 │                 │                │
+      ▼                 ▼                 ▼                ▼
+┌─────────────┐  ┌─────────────┐  ┌─────────────┐  �┌───────────┐
+│  Amazon RDS │  │  Amazon S3  │  │ LLM Service │  │    AWS    │
+│ PostgreSQL  │  │             │  │             │  │CloudWatch │
+│             │  │ • PDF Files │  │ • GPT-4     │  │(Monitoring)│
+│ • Drafts    │  │ • Documents │  │ • Claude    │  │           │
+│ • Audit Trail│  │             │  │             │  │           │
+│ • Citations │  │             │  │             │  │           │
+└─────────────┘  └─────────────┘  └─────────────┘  └───────────┘
+
+         All components deployed on AWS Infrastructure
 ```
 
 ### Data Flow

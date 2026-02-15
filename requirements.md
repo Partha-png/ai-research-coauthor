@@ -2,7 +2,19 @@
 
 ## Introduction
 
-The AI Research Co-Author is a Generative AI system designed to assist researchers in early-stage research writing by generating complete, citation-grounded, and explainable research-paper-style drafts. The system employs multiple specialized AI agents orchestrated by a custom Manager/Controller Process (MCP) to produce structured research drafts with full traceability.
+**Problem Statement:**  
+Existing GenAI tools for research (ChatGPT, Gemini, etc.) suffer from hallucinations, overconfident claims, and non-transparent reasoning, making them unreliable for academic research and early-stage draft generation.
+
+**Solution:**  
+AI Research Co-Author is a multi-agent GenAI system that simulates real research workflows to assist researchers in creating explainable, citation-grounded, early-stage research drafts.
+
+**Key Characteristics:**
+- Multi-agent architecture with specialized roles (Reviewer, Methodology, Critic)
+- RAG-powered citation grounding - zero hallucinated references
+- Custom MCP orchestration (transparent, content-neutral)
+- Full traceability via PostgreSQL audit trail for complete explainability
+- Deployed on AWS Infrastructure
+- MVP Target: AWS AI for Bharat Hackathon (Feb 8-15, 2025)
 
 ## Glossary
 
@@ -44,20 +56,21 @@ The AI Research Co-Author is a Generative AI system designed to assist researche
 
 ## System Constraints and Assumptions
 
-- **Hackathon Timeline**: MVP must be completed within February 8-15, 2025
-- **Infrastructure**: System will run on AWS infrastructure
-- **LLM Dependencies**: System relies on external LLM APIs (GPT-4 or Claude)
-- **Input Format**: Users provide research topics and optional seed papers as input
-- **Output Format**: Drafts are structured text documents, not publication-ready papers
-- **Data Storage**: PostgreSQL for structured data, S3 for PDF storage
-- **Orchestration**: MCP is custom-built, not using existing workflow engines
-- **Agent Framework**: LangChain used internally within agents, not for orchestration
+- **Hackathon Timeline**: MVP must be completed within February 8-15, 2025 (AWS AI for Bharat Hackathon)
+- **Infrastructure**: System deployed on AWS Infrastructure (EC2, RDS, S3, CloudWatch)
+- **LLM Dependencies**: System relies on external LLM APIs (OpenAI GPT-4 or Anthropic Claude)
+- **Input Format**: Users provide research topics and optional seed papers (PDFs) as input
+- **Output Format**: Drafts are structured early-stage research documents, not publication-ready papers
+- **Data Storage**: Amazon RDS PostgreSQL for structured data and audit trails, Amazon S3 for PDF document storage
+- **Orchestration**: Custom-built MCP orchestrator (content-neutral, transparent control flow)
+- **Agent Framework**: LangChain used internally within agents for RAG pipelines and prompt templates, NOT for orchestration
+- **Testing**: Property-based testing using Hypothesis framework (minimum 100 iterations per property)
 
 ## Requirements
 
 ### Requirement 1: Multi-Agent System Architecture
 
-**User Story:** As a system architect, I want a clear separation of concerns between agents and orchestration, so that the system is maintainable and each component has a single responsibility.
+**User Story:** As a system architect, I want clear separation of concerns between agents and orchestration for maintainability.
 
 #### Acceptance Criteria
 
@@ -71,7 +84,7 @@ The AI Research Co-Author is a Generative AI system designed to assist researche
 
 ### Requirement 2: Research Draft Generation
 
-**User Story:** As a researcher, I want to generate a structured research-paper-style draft from a research topic, so that I can accelerate my early-stage research writing.
+**User Story:** As a researcher, I want to generate a structured research-paper-style draft from a research topic to accelerate early-stage writing.
 
 #### Acceptance Criteria
 
