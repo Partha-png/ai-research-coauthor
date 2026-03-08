@@ -1,27 +1,27 @@
 # AI Research Co-Author: System Design Document
 
-**Version:** 2.0  
+**Version:** 2.0 (Hackathon Optimized)  
 **Date:** February 15, 2026  
 **Project:** AI Research Co-Author Platform  
 **Target:** AWS AI for Bharat Hackathon  
-**Architecture:** Production-Ready Serverless Platform
+**Scope:** 48-Hour MVP + Production Vision
 
 ---
 
 ## 1. Architecture Philosophy
 
-The AI Research Co-Author is architected as a **production-grade, serverless AI platform** on AWS infrastructure. The design adheres to three foundational architectural principles:
+The AI Research Co-Author demonstrates **production-ready thinking with hackathon-appropriate scope**. Our design balances three critical principles:
 
-### 1.1 Production-Ready, Scalable Design
+### 1.1 MVP-First, Scale-Ready Design
 
-**Current Scope**: Complete working system with 5 specialized agents
+**hackathon Reality**: Build what can be **demoed live in 5 minutes**
 
-**Scale-Ready Architecture**: Designed for horizontal scaling to 10,000+ users
+**Production Vision**: Architect for **horizontal scaling to 10,000+ users**
 
-**Strategic Approach**:
-- Core functionality fully operational (5 agents, end-to-end flow)
-- Architecture designed for seamless expansion (add agents without redesign)
-- Clear phased roadmap from current platform to enterprise scale
+**Our Approach**:
+- Core functionality fully working (5 agents, end-to-end flow)
+- Architecture designed for easy expansion (add agents without redesign)
+- Document both current MVP and expansion path (shows strategic thinking)
 
 ---
 
@@ -34,10 +34,10 @@ The AI Research Co-Author is architected as a **production-grade, serverless AI 
 - **Built-In Redundancy**: Multi-AZ without configuration
 
 **AWS Service Selection Criteria**:
-- Fully managed services (Bedrock, Lambda, DynamoDB)
-- Pay-per-use billing (no idle costs)
-- Production-grade (same services from prototype to enterprise scale)
-- Excluded: Services requiring infrastructure management (EC2, EKS)
+- ✅ Fully managed (Bedrock, Lambda, DynamoDB)
+- ✅ Pay-per-use billing (no idle costs)
+- ✅ Production-grade (same services from MVP → enterprise)
+- ❌ Avoid: Services requiring infrastructure management (EC2, EKS)
 
 ---
 
@@ -197,10 +197,10 @@ Cross-Cutting: CloudWatch Logs + Metrics
 | GET | `/api/v1/research/{session_id}/draft` | Retrieve generated draft |
 | POST | `/api/v1/citations/verify` | Standalone citation validation |
 
-**Authentication**:
-- API key authentication via `x-api-key` header (current implementation)
-- Lambda authorizer for key validation and rate limiting
-- Migration path: AWS Cognito User Pools with JWT tokens for enterprise deployment
+**Authentication** (MVP):
+- API key in `x-api-key` header
+- Simple key validation in Lambda authorizer
+- Production: Migrate to Cognito User Pools + JWT
 
 **Response Format**:
 ```json
@@ -220,7 +220,7 @@ Cross-Cutting: CloudWatch Logs + Metrics
 
 ### 3.2 Layer 2: Orchestration Layer
 
-**Component**: Lambda Orchestrator (centralized coordination function)
+**Component**: Lambda Orchestrator (single function for MVP)
 
 **Responsibilities**:
 1. Create session in DynamoDB
@@ -229,7 +229,7 @@ Cross-Cutting: CloudWatch Logs + Metrics
 4. Handle errors and retries
 5. Update session status
 
-**Sequential Execution Pattern**:
+**Sequential Execution** (MVP):
 ```python
 def orchestrate_research(topic, session_id):
     # Agent 1: Discovery
@@ -606,7 +606,7 @@ def get_embedding(text: str):
 
 ## 4. Multi-Agent Coordination
 
-### 4.1 Sequential Agent Pipeline
+### 4.1 Sequential Pipeline (MVP)
 
 ```
 User Request
@@ -628,7 +628,7 @@ Complete Draft → S3
 Return session_id to user
 ```
 
-**Total Latency**: ~220 seconds (3.7 minutes) - Well within 5-minute target
+**Total Latency**: ~220 seconds (3.5 minutes) ✅ Target: < 5 min
 
 ---
 
@@ -777,7 +777,7 @@ def invoke_tool_with_retry(tool_name, params, max_retries=3):
 
 ### 5.3 Scaling Strategy
 
-**Auto-Scaling Configuration**:
+**MVP Auto-Scaling**:
 - Lambda: Default 1,000 concurrent executions (sufficient for 1,000 users)
 - DynamoDB: On-demand mode (auto-scales to any load)
 - API Gateway: 10,000 requests/second (no config needed)
@@ -801,9 +801,9 @@ def invoke_tool_with_retry(tool_name, params, max_retries=3):
 | **API Gateway** | 3 requests | **$0.00001** |
 | **DynamoDB** | 10 writes + 5 reads | **$0.015** |
 | **S3** | 50MB storage + 30 PUTs | **$0.005** |
-| **Total** | | **~$0.22/session** |
+| **Total** | | **~$0.22/session** ✅ |
 
-**Target**: < $0.30/session (Achieved)
+**Target**: < $0.30/session ✅ Achieved
 
 ---
 
@@ -898,7 +898,7 @@ def invoke_tool_with_retry(tool_name, params, max_retries=3):
 
 ## 8. Phased Implementation Roadmap
 
-### Phase 1: Core Platform (Current - Completed)
+### Phase 1: Hackathon MVP (Current) ✅
 
 **Timeline**: 48 hours
 
@@ -954,44 +954,45 @@ def invoke_tool_with_retry(tool_name, params, max_retries=3):
 
 ---
 
-## 9. Architectural Trade-Off Analysis
+## 9. Trade-Off Analysis (CTO Thinking)
 
-### Architectural Decision 1: Sequential vs. Parallel Agent Execution
+### Decision 1: Sequential vs. Parallel Agent Execution
 
-**Current Implementation**: Sequential (Lambda orchestrator)
+**MVP Choice**: Sequential (Lambda orchestrator)
 
 **Rationale**:
-- **Pro**: Simplified implementation and debugging workflow
-- **Pro**: Deterministic execution order ensures predictable behavior
-- **Con**: Suboptimal latency compared to parallel execution (3.7min vs. theoretical 1.5min)
+- **Pro**: Simpler to implement and debug
+- **Pro**: Clear linear flow for demo
+- **Con**: Slower than parallel (but still < 5 min target)
 
-**Enterprise Migration**: AWS Step Functions with parallel execution states for independent agents
+**Production Migration**: Step Functions with parallel states
 
 ---
 
-### Architectural Decision 2: In-Memory FAISS vs. OpenSearch
+### Decision 2: In-Memory FAISS vs. OpenSearch
 
-**Current Implementation**: In-memory FAISS (loaded per Lambda invocation)
+**MVP Choice**: In-memory FAISS (loaded per Lambda invocation)
 
 **Rationale**:
-- **Pro**: Zero infrastructure overhead, rapid deployment cycle
-- **Pro**: Sufficient performance for current scale (30-50 papers per session)
-- **Con**: Limited horizontal scalability for enterprise workloads
+- **Pro**: Zero infrastructure setup
+- **Pro**: Fast for 30-50 papers
+- **Con**: No persistence across invocations
+- **Con**: Not scalable beyond 1K papers
 
-**Enterprise Migration**: OpenSearch Serverless with abstracted vector search interface (implementation-agnostic agent code)
+**Production Migration**: OpenSearch Serverless (designed with compatible interfaces)
 
 ---
 
-### Architectural Decision 3: API Key Auth vs. Cognito
+### Decision 3: API Key Auth vs. Cognito
 
-**Current Implementation**: API key authentication
+**MVP Choice**: Simple API key
 
 **Rationale**:
-- **Pro**: Minimal implementation complexity
-- **Pro**: Sufficient for controlled access scenarios
-- **Con**: Limited user lifecycle management capabilities
+- **Pro**: 10-minute setup
+- **Pro**: Sufficient for hackathon demo
+- **Con**: Not production-grade (no user management)
 
-**Enterprise Migration**: AWS Cognito User Pools with JWT tokens (API Gateway native support, configuration-only migration)
+**Production Migration**: Cognito User Pools (API Gateway supports both natively)
 
 ---
 
@@ -999,15 +1000,15 @@ def invoke_tool_with_retry(tool_name, params, max_retries=3):
 
 ### Strengths vs. Existing Solutions
 
-| **Feature** | **AI Research Co-Author** | **Elicit.org** | **Consensus.app** | **ChatGPT** |
+| **Feature** | **Our MVP** | **Elicit.org** | **Consensus.app** | **ChatGPT** |
 |-----------|-----------|--------------|------------------|-----------|
-| **Multi-Agent Architecture** | Yes (5 agents) | No (Monolithic) | No (Monolithic) | No (Single agent) |
-| **Citation Verification** | Yes (DOI + arXiv + Retraction Watch) | Partial (no retraction check) | Partial | No verification |
-| **Research Memory** | Yes (Persistent sessions) | No | No | Limited (chat history) |
-| **Methodology Generation** | Yes (Dedicated agent) | No | No | Basic (prompt-based) |
-| **AWS Native** | Yes (Full serverless stack) | No | No | No |
-| **Open Architecture** | Yes (Documented APIs) | No (Closed) | No (Closed) | No (Closed) |
-| **Cost Transparency** | Yes ($0.22/session) | Unknown | Unknown | $20/month (unlimited) |
+| **Multi-Agent Architecture** | ✅ 5 agents | ❌ Monolithic | ❌ Monolithic | ❌ Single agent |
+| **Citation Verification** | ✅ DOI + arXiv + Retraction Watch | Partial (no retraction check) | Partial | ❌ No verification |
+| **Research Memory** | ✅ Persistent sessions | ❌ | ❌ | Limited (chat history) |
+| **Methodology Generation** | ✅ Dedicated agent | ❌ | ❌ | Basic (prompt-based) |
+| **AWS Native** | ✅ Full serverless stack | ❌ | ❌ | ❌ |
+| **Open Architecture** | ✅ Documented APIs | ❌ Closed | ❌ Closed | ❌ Closed |
+| **Cost Transparency** | ✅ $0.22/session | Unknown | Unknown | $20/month (unlimited) |
 
 ### Innovation Highlights for Judges
 
@@ -1111,10 +1112,3 @@ curl https://api.ai-research.example.com/v1/research/abc123-def456/draft \
 - [arXiv API](https://arxiv.org/help/api)
 - [Retraction Watch Database](http://retractiondatabase.org/)
 
----
-
-**Document Status**: Hackathon-Ready  
-**Prepared for**: AWS AI for Bharat Hackathon 2026  
-**Team**: AI Research Co-Author
-
-**Next Steps**: Begin implementation → Prepare live demo script

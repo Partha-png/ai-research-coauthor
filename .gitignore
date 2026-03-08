@@ -1,1 +1,11 @@
-/venv
+.env
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.faiss
+*.pkl
+.streamlit/
+*.log
+.sessions/
+patch_*.py
